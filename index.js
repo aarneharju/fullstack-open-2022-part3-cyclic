@@ -4,7 +4,16 @@ const morgan = require('morgan');
 
 const app = express();
 
-app.use(morgan('tiny'));
+// app.use(morgan('tiny'));
+app.use(
+  morgan(
+    ':method :url :status :res[content-length] - :response-time ms :param[id]'
+  )
+);
+
+morgan.token('param', function (req, res, param) {
+  return req.params[param];
+});
 
 app.use(express.json());
 
