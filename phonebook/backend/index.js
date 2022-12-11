@@ -1,21 +1,21 @@
 const { request } = require('express');
 const express = require('express');
-const morgan = require('morgan');
+// const morgan = require('morgan');
 const app = express();
 const cors = require('cors');
 
 app.use(cors());
 
 // app.use(morgan('tiny'));
-app.use(
-  morgan(
-    ':method :url :status :res[content-length] - :response-time ms :param[id]'
-  )
-);
+// app.use(
+//   morgan(
+//     ':method :url :status :res[content-length] - :response-time ms :param[id]'
+//   )
+// );
 
-morgan.token('param', function (req, res, param) {
-  return req.params[param];
-});
+// morgan.token('param', function (req, res, param) {
+//   return req.params[param];
+// });
 
 app.use(express.json());
 
@@ -110,7 +110,7 @@ app.post('/api/persons', (request, response) => {
   response.json(persons);
 });
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
