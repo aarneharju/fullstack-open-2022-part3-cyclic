@@ -106,8 +106,6 @@ const App = () => {
     setNewNumber('');
   }
 
-  console.log({ persons });
-
   // This variable needs to be defined after deletePerson has been defined
   const personsArray = persons.filter(person => person.name.toLowerCase().includes(newSearch.toLowerCase())).map(person => <Person key={person.id} person={person} deletePerson={deletePerson} />); // deletePerson -function needs to be defined before this
 
@@ -145,10 +143,12 @@ const App = () => {
 
       apiCalls.addPerson(newNumberObject)
         .then(data => {
-          const message = `${data.name} added to phonebook.`;
+          const message = `${newNumberObject.name} added to phonebook.`;
           const type = 'success';
+          const personThatWasAdded = data.filter(person => person.name === newNumberObject.name)
 
-          setPersons(persons.concat({ id: data.id, name: data.name, number: data.number }));
+
+          setPersons(persons.concat({ 'id': personThatWasAdded[0].id, 'name': personThatWasAdded[0].name, 'number': personThatWasAdded[0].number }));
           resetFormFields();
 
           handleNotifications({ message, type });
