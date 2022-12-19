@@ -118,7 +118,7 @@ const App = () => {
     apiCalls.getAllPersons()
       .then(data => setPersons(data))
       .catch(error => {
-        const message = `Unable to fetch notes: ${error}`;
+        const message = `Unable to fetch persons: ${error}`;
         const type = 'error';
         handleNotifications({ message, type });
       });
