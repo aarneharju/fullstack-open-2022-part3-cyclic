@@ -106,6 +106,8 @@ const App = () => {
     setNewNumber('');
   }
 
+  console.log({ persons });
+
   // This variable needs to be defined after deletePerson has been defined
   const personsArray = persons.filter(person => person.name.toLowerCase().includes(newSearch.toLowerCase())).map(person => <Person key={person.id} person={person} deletePerson={deletePerson} />); // deletePerson -function needs to be defined before this
 
