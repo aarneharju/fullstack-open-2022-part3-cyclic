@@ -13,19 +13,37 @@ const url = `mongodb+srv://Aarne:${password}@cluster0.pnfyaog.mongodb.net/?retry
 mongoose.set('strictQuery', false);
 mongoose.connect(url);
 
-const noteSchema = new mongoose.Schema({
-  content: String,
-  important: Boolean,
+const phonebookSchema = new mongoose.Schema({
+  name: String,
+  number: String,
 });
 
-const Note = mongoose.model('Note', noteSchema);
+const PhonebookEntry = mongoose.model('PhonebookEntry', phonebookSchema);
 
-const note = new Note({
-  content: 'HTML is Easy',
-  important: true,
-});
+if (process.argv[3] && process.argv[4]) {
 
-note.save().then(result => {
-  console.log('note saved!');
-  mongoose.connection.close();
-});
+  const phonebookEntry = new PhonebookEntry({
+    name: process.argv[3],
+    number: process.argv[4],
+  });
+
+  phonebookEntry.save().then(result => {
+    console.log(`Added ${process.argv[3]} ${process.argv[4]} to phonebook.`);
+    mongoose.connection.close();
+  });
+} else {
+  PhonebookEntry
+    .find({})
+    .then(result => {
+      console.log('Phonebook:');
+      result.forEach(entry => {
+        console.log(`${entry.name} ${entry.number}`);
+      });
+      mongoose.connection.close();
+    })
+
+}
+
+
+
+
