@@ -22,7 +22,8 @@ app.use(cors());
 
 app.use(express.json());
 
-const url = `mongodb+srv://Aarne:${password}@cluster0.pnfyaog.mongodb.net/?retryWrites=true&w=majority`;
+const mongodbPassword = process.env.MONGODB_PASSWORD;
+const url = `mongodb+srv://Aarne:${mongodbPassword}@cluster0.pnfyaog.mongodb.net/?retryWrites=true&w=majority`;
 
 mongoose.set('strictQuery', false);
 mongoose.connect(url);
