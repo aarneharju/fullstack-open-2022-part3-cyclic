@@ -4,6 +4,8 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 
+const mongoose = require('mongoose');
+
 app.use(express.static('build'));
 app.use(cors());
 
@@ -19,6 +21,18 @@ app.use(cors());
 // });
 
 app.use(express.json());
+
+const url = `mongodb+srv://Aarne:${password}@cluster0.pnfyaog.mongodb.net/?retryWrites=true&w=majority`;
+
+mongoose.set('strictQuery', false);
+mongoose.connect(url);
+
+const phonebookSchema = new mongoose.Schema({
+  name: String,
+  number: String,
+});
+
+const PhonebookEntry = mongoose.model('PhonebookEntry', phonebookSchema);
 
 let persons = [
   {
@@ -47,7 +61,11 @@ let persons = [
 const generateID = () => Math.floor(Math.random() * 9999999);
 
 app.get('/api/persons', (request, response) => {
-  response.json(persons);
+  PhonebookEntry
+  .find({})
+  .then(persons => {
+      response.json(persons);
+    }
 });
 
 app.get('/api/persons/:id', (request, response) => {
