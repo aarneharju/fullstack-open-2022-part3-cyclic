@@ -61,11 +61,9 @@ let persons = [
 const generateID = () => Math.floor(Math.random() * 9999999);
 
 app.get('/api/persons', (request, response) => {
-  PhonebookEntry
-  .find({})
-  .then(persons => {
-      response.json(persons);
-    }
+  PhonebookEntry.find({}).then(persons => {
+    response.json(persons);
+  });
 });
 
 app.get('/api/persons/:id', (request, response) => {
