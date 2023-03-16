@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { request } = require('express');
 const express = require('express');
 // const morgan = require('morgan');
@@ -10,42 +11,6 @@ app.use(cors());
 
 const PhonebookEntry = require('./models/person');
 
-// app.use(morgan('tiny'));
-// app.use(
-//   morgan(
-//     ':method :url :status :res[content-length] - :response-time ms :param[id]'
-//   )
-// );
-
-// morgan.token('param', function (req, res, param) {
-//   return req.params[param];
-// });
-
-/*
-let persons = [
-  {
-    id: 1,
-    name: 'Arto Hellas',
-    number: '040-123456',
-  },
-  {
-    id: 2,
-    name: 'Ada Lovelace',
-    number: '39-44-5323523',
-  },
-  {
-    id: 3,
-    name: 'Dan Abramov',
-    number: '12-43-234345',
-  },
-  {
-    id: 4,
-    name: 'Mary Poppendieck',
-    number: '39-23-6423122',
-  },
-];
-*/
-
 //Functions
 const generateID = () => Math.floor(Math.random() * 9999999);
 
@@ -57,17 +22,14 @@ app.get('/api/persons', (request, response) => {
 
 app.get('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id);
-  const person = persons.find(person => person.id === id);
-  if (person) {
-    response.json(person);
-  } else {
-    response.status(404).end();
-  }
+  PhonebookEntry.findById(id).then(person => response.json(person));
 });
 
 app.get('/test', (request, response) => {
   response.send('Hello hello. This is the test folder.');
 });
+
+/* implement later for database version
 
 app.get('/info', (request, response) => {
   response.send(
@@ -76,12 +38,16 @@ app.get('/info', (request, response) => {
   );
   response.send(``);
 });
+ */
+
+/* implement later for database version
 
 app.delete('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id);
   persons = persons.filter(person => person.id !== id);
   response.status(204).end();
 });
+*/
 
 app.post('/api/persons', (request, response) => {
   const body = request.body;
@@ -99,21 +65,23 @@ app.post('/api/persons', (request, response) => {
     });
   }
 
+  /* implement later for database version
+
   if (persons.filter(person => person.name === body.name).length > 0) {
     return response.status(400).json({
       error: 'Name already exists in phonebook.',
     });
   }
+  */
 
-  const person = {
-    id: generateID(),
+  const person = new PhonebookEntry({
     name: body.name,
     number: body.number,
-  };
+  });
 
-  persons = persons.concat(person);
-
-  response.json(persons);
+  person.save().then(savedPerson => {
+    response.json(savedPerson);
+  });
 });
 
 const PORT = process.env.PORT || 3001;
