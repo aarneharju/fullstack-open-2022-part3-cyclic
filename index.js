@@ -8,6 +8,8 @@ const mongoose = require('mongoose');
 app.use(express.static('build'));
 app.use(cors());
 
+const PhonebookEntry = require('./models/person');
+
 // app.use(morgan('tiny'));
 // app.use(
 //   morgan(
@@ -18,18 +20,6 @@ app.use(cors());
 // morgan.token('param', function (req, res, param) {
 //   return req.params[param];
 // });
-
-app.use(express.json());
-
-mongoose.set('strictQuery', false);
-mongoose.connect(url);
-
-const phonebookSchema = new mongoose.Schema({
-  name: String,
-  number: String,
-});
-
-const PhonebookEntry = require('./models/person');
 
 /*
 let persons = [
