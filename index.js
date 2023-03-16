@@ -4,8 +4,6 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 
-const mongoose = require('mongoose');
-
 app.use(express.static('build'));
 app.use(cors());
 
@@ -22,9 +20,6 @@ app.use(cors());
 
 app.use(express.json());
 
-const mongodbPassword = process.env.MONGODB_PASSWORD;
-const url = `mongodb+srv://Aarne:${mongodbPassword}@cluster0.pnfyaog.mongodb.net/?retryWrites=true&w=majority`;
-
 mongoose.set('strictQuery', false);
 mongoose.connect(url);
 
@@ -33,8 +28,9 @@ const phonebookSchema = new mongoose.Schema({
   number: String,
 });
 
-const PhonebookEntry = mongoose.model('PhonebookEntry', phonebookSchema);
+const PhonebookEntry = require('./models/person');
 
+/*
 let persons = [
   {
     id: 1,
@@ -57,6 +53,7 @@ let persons = [
     number: '39-23-6423122',
   },
 ];
+*/
 
 //Functions
 const generateID = () => Math.floor(Math.random() * 9999999);
