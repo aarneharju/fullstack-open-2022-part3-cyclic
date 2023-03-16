@@ -3,6 +3,7 @@ const express = require('express');
 // const morgan = require('morgan');
 const app = express();
 const cors = require('cors');
+const mongoose = require('mongoose');
 
 app.use(express.static('build'));
 app.use(cors());
