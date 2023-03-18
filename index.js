@@ -6,12 +6,14 @@ const app = express();
 const cors = require('cors');
 const mongoose = require('mongoose');
 
+// Middleware
 app.use(express.static('build'));
 app.use(cors());
+app.use(express.json());
 
 const PhonebookEntry = require('./models/person');
 
-//Functions
+// Functions
 const generateID = () => Math.floor(Math.random() * 9999999);
 
 app.get('/api/persons', (request, response) => {
@@ -51,7 +53,7 @@ app.delete('/api/persons/:id', (request, response) => {
 
 app.post('/api/persons', (request, response) => {
   const body = request.body;
-  console.log(body);
+  console.log('post: request body - ', { body });
 
   if (!body.name) {
     return response.status(400).json({
