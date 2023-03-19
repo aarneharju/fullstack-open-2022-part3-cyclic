@@ -14,17 +14,35 @@ app.use(express.json());
 const PhonebookEntry = require('./models/person');
 
 // Functions
-const generateID = () => Math.floor(Math.random() * 9999999);
+
+// generate id not needed anymore now that we're using mongodb, leaving here for reference
+//const generateID = () => Math.floor(Math.random() * 9999999);
 
 app.get('/api/persons', (request, response) => {
-  PhonebookEntry.find({}).then(persons => {
-    response.json(persons);
-  });
+  PhonebookEntry.find({})
+    .then(persons => {
+      response.json(persons);
+    })
+    .catch(error => {
+      console.log(error);
+      response.status(500).end();
+    });
 });
 
 app.get('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id);
-  PhonebookEntry.findById(id).then(person => response.json(person));
+  const id = request.params.id;
+  PhonebookEntry.findById(id)
+    .then(person => {
+      if (person) {
+        response.json(person);
+      } else {
+        response.status(404).end();
+      }
+    })
+    .catch(error => {
+      console.log(error);
+      response.status(400).send({ error: 'malformatted id' });
+    });
 });
 
 app.get('/test', (request, response) => {
@@ -42,14 +60,17 @@ app.get('/info', (request, response) => {
 });
  */
 
-/* implement later for database version
-
 app.delete('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id);
-  persons = persons.filter(person => person.id !== id);
-  response.status(204).end();
+  const id = request.params.id;
+  PhonebookEntry.findByIdAndRemove(id)
+    .then(result => {
+      response.status(204).end();
+    })
+    .catch(error => {
+      console.log(error);
+      response.status(500).end();
+    });
 });
-*/
 
 app.post('/api/persons', (request, response) => {
   const body = request.body;
