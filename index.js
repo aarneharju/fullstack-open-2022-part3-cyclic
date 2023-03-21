@@ -1,35 +1,53 @@
 require('dotenv').config();
-const { request } = require('express');
 const express = require('express');
 // const morgan = require('morgan');
 const app = express();
 const cors = require('cors');
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 
 // Middleware
 app.use(express.static('build'));
 app.use(cors());
 app.use(express.json());
 
+// Add MongoDB
 const PhonebookEntry = require('./models/person');
 
+// Set port and start server
+const PORT = process.env.PORT;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
 // Functions
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' });
+};
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' });
+  }
+
+  next(error);
+};
 
 // generate id not needed anymore now that we're using mongodb, leaving here for reference
 //const generateID = () => Math.floor(Math.random() * 9999999);
 
-app.get('/api/persons', (request, response) => {
+app.get('/api/persons', (request, response, next) => {
   PhonebookEntry.find({})
     .then(persons => {
       response.json(persons);
     })
-    .catch(error => {
-      console.log(error);
-      response.status(500).end();
-    });
+    .catch(error => next(error));
 });
 
-app.get('/api/persons/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response, next) => {
   const id = request.params.id;
   PhonebookEntry.findById(id)
     .then(person => {
@@ -39,10 +57,7 @@ app.get('/api/persons/:id', (request, response) => {
         response.status(404).end();
       }
     })
-    .catch(error => {
-      console.log(error);
-      response.status(400).send({ error: 'malformatted id' });
-    });
+    .catch(error => next(error));
 });
 
 app.get('/test', (request, response) => {
@@ -58,18 +73,15 @@ app.get('/info', (request, response) => {
   );
   response.send(``);
 });
- */
+*/
 
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response, next) => {
   const id = request.params.id;
   PhonebookEntry.findByIdAndRemove(id)
     .then(result => {
       response.status(204).end();
     })
-    .catch(error => {
-      console.log(error);
-      response.status(500).end();
-    });
+    .catch(error => next(error));
 });
 
 app.post('/api/persons', (request, response) => {
@@ -89,7 +101,7 @@ app.post('/api/persons', (request, response) => {
   }
 
   /* implement later for database version
-
+  
   if (persons.filter(person => person.name === body.name).length > 0) {
     return response.status(400).json({
       error: 'Name already exists in phonebook.',
@@ -107,8 +119,8 @@ app.post('/api/persons', (request, response) => {
   });
 });
 
-const PORT = process.env.PORT || 3001;
+// handler of requests with unknown endpoint
+app.use(unknownEndpoint);
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// handler of requests with result to errors - this has to be the last loaded middleware.
+app.use(errorHandler);
