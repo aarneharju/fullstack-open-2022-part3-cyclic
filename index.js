@@ -100,15 +100,6 @@ app.post('/api/persons', (request, response) => {
     });
   }
 
-  /* implement later for database version
-  
-  if (persons.filter(person => person.name === body.name).length > 0) {
-    return response.status(400).json({
-      error: 'Name already exists in phonebook.',
-    });
-  }
-  */
-
   const person = new PhonebookEntry({
     name: body.name,
     number: body.number,
@@ -117,6 +108,22 @@ app.post('/api/persons', (request, response) => {
   person.save().then(savedPerson => {
     response.json(savedPerson);
   });
+});
+
+app.put('/api/persons/:id', (request, response, next) => {
+  const id = request.params.id;
+  const body = request.body;
+
+  PhonebookEntry.findByIdAndUpdate(
+    id, // Query
+    { name: body.name, number: body.number }, // Update object
+    { new: true } // Return the document after update was applied
+  )
+    .then(updatedEntry => {
+      console.log(`Number updated for ${body.name}.`);
+      return response.json(updatedEntry);
+    })
+    .catch(error => next(error));
 });
 
 // handler of requests with unknown endpoint
