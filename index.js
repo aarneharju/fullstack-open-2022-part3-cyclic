@@ -33,6 +33,10 @@ const errorHandler = (error, request, response, next) => {
     return response.status(400).send({ error: 'malformatted id' });
   }
 
+  if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message });
+  }
+
   next(error);
 };
 
@@ -91,15 +95,15 @@ app.post('/api/persons', (request, response) => {
   console.log('post: request body - ', { body });
 
   if (!body.name) {
-    return response.status(400).json({
-      error: 'Name is missing.',
-    });
+    const error = new Error('Name is missing.');
+    error.name = 'ValidationError';
+    throw error;
   }
 
   if (!body.number) {
-    return response.status(400).json({
-      error: 'Number is missing.',
-    });
+    const error = new Error('Number is missing.');
+    error.name = 'ValidationError';
+    throw error;
   }
 
   const person = new PhonebookEntry({
