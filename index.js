@@ -64,16 +64,18 @@ app.get('/test', (request, response) => {
   response.send('Hello hello. This is the test folder.');
 });
 
-/* implement later for database version
-
-app.get('/info', (request, response) => {
-  response.send(
-    `<p>Phonebook has info for ${persons.length} people.</p>
-    <p>${new Date()}</p>`
-  );
-  response.send(``);
+app.get('/info', (request, response, next) => {
+  PhonebookEntry.countDocuments({}, function (error, count) {
+    if (error) {
+      next(error);
+    } else {
+      response.send(
+        `<p>Phonebook has info for ${count} people.</p>
+        <p>${new Date()}</p>`
+      );
+    }
+  });
 });
-*/
 
 app.delete('/api/persons/:id', (request, response, next) => {
   const id = request.params.id;
