@@ -90,7 +90,7 @@ app.delete('/api/persons/:id', (request, response, next) => {
     .catch(error => next(error));
 });
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
   const body = request.body;
   console.log('post: request body - ', { body });
 
@@ -111,9 +111,12 @@ app.post('/api/persons', (request, response) => {
     number: body.number,
   });
 
-  person.save().then(savedPerson => {
-    response.json(savedPerson);
-  });
+  person
+    .save()
+    .then(savedPerson => {
+      response.json(savedPerson);
+    })
+    .catch(error => next(error));
 });
 
 app.put('/api/persons/:id', (request, response, next) => {
@@ -123,7 +126,7 @@ app.put('/api/persons/:id', (request, response, next) => {
   PhonebookEntry.findByIdAndUpdate(
     id, // Query
     { name: body.name, number: body.number }, // Update object
-    { new: true } // Return the document after update was applied
+    { new: true, runValidators: true, context: 'query' } // Return the document after update was applied
   )
     .then(updatedEntry => {
       console.log(`Number updated for ${body.name}.`);
