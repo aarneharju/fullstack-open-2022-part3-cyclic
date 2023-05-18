@@ -196,8 +196,13 @@ const App = () => {
         })
         .catch(error => {
           console.log(error.response.data.error);
-          const message = `Unable to add person, ${serverConnectionErrorMessage}: ${error}`;
+          let message = '';
           const type = 'error';
+          if (error.response.data.error.includes('ValidationError')) {
+            message = `Unable to add person: ${error.response.data.error}`;
+          } else {
+            message = `Unable to add person, ${serverConnectionErrorMessage}: ${error}`;
+          }
           handleNotifications({ message, type });
           resetFormFields();
         });

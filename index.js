@@ -34,7 +34,9 @@ const errorHandler = (error, request, response, next) => {
   }
 
   if (error.name === 'ValidationError') {
-    return response.status(400).json({ error: error.message });
+    return response.status(400).json({
+      error: `${error.name} - ${error.message}`, // Error name is ValidationError in this case so we use that to check for the correct error message at front end.
+    }); // error.message
   }
 
   next(error);
